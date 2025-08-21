@@ -35,14 +35,14 @@
 
     /* Stage grid */
     .stage{display:grid;grid-template-columns:320px 1fr 360px;gap:22px;align-items:start;width:min(1200px,100%)}
-    .card{background:rgba(255,255,255,.95);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;transition:transform .25s;will-change:transform}
+    .card{background:rgba(255,255,255,.95);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;transition:transform .25s;will-change:transform;color:var(--ink)}
     .card:hover{transform:translateY(-4px)}
 
     /* Avatar card */
     .avatar-card{padding:18px 20px 22px;position:relative;text-align:center}
     .speech{position:absolute;left:50%;transform:translateX(-50%);top:-10px;opacity:0;pointer-events:none;transition:all .35s ease;z-index:5}
     .speech.active{opacity:1;transform:translate(-50%,-6px)}
-    .bubble{background:#fff;border-radius:16px;padding:12px 14px;max-width:320px;box-shadow:0 10px 24px rgba(0,0,0,.22);font-size:14px}
+    .bubble{background:#fff;border-radius:16px;padding:12px 14px;max-width:320px;box-shadow:0 10px 24px rgba(0,0,0,.22);font-size:14px;color:var(--ink)}
     .bubble:after{content:"";position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);border-left:12px solid transparent;border-right:12px solid transparent;border-top:12px solid #fff}
 
     /* Bitmoji‑ish SVG avatar */
@@ -209,17 +209,15 @@
 
       <!-- Middle: timeline + goals -->
       <section class="mid">
-
         <article class="card timeline" aria-label="Day timeline">
           <div class="track">
             <span class="line"></span>
-            <button class="point active" data-time="morning" title="Morning">☀️</button>
+            <button class="point" data-time="morning" title="Morning">☀️</button>
             <button class="point" data-time="office" title="Office">🏢</button>
             <button class="point" data-time="evening" title="Evening">🌆</button>
             <button class="point" data-time="night" title="Night">🌙</button>
           </div>
         </article>
-       
 
         <article class="card story" aria-live="polite">
           <div>🗣️</div>
