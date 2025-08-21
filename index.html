@@ -1,146 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Meet Amit - Your Delhi Friend (Realistic)</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meet Amit — Your Delhi Friend (Bitmoji‑style, Animated)</title>
   <style>
     :root{
-      --bg-1:#8B7355;--bg-2:#5F7161;--bg-3:#6B8E7F;--glass:rgba(255,255,255,.12);
-      --text:#121417;--muted:#5b6168;--card:#ffffff;--shadow:0 10px 30px rgba(0,0,0,.18);
-      --brand:#ffd54a;--ok:#2ecc71;--warn:#f39c12;--bad:#e74c3c;
+      --bg1:#2a2e37; --bg2:#324b4e; --bg3:#2f6b66; --glass:rgba(255,255,255,.12);
+      --card:#ffffff; --ink:#0f1720; --muted:#64748b; --brand:#ffd54a; --accent:#22c55e; --accent2:#60a5fa;
+      --shadow:0 12px 32px rgba(0,0,0,.25);
     }
-    *{box-sizing:border-box;margin:0;padding:0}
+    *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      font-family: ui-sans-serif,system-ui,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
-      color:var(--text);
-      background:linear-gradient(135deg,var(--bg-1) 0%,var(--bg-2) 50%,var(--bg-3) 100%);
-      transition:background .8s ease,color .3s ease;
-      overflow:hidden;
-    }
-    .main{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;position:relative}
+    body{margin:0;font-family: ui-sans-serif,system-ui,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;color:var(--ink);
+      background: radial-gradient(1200px 600px at 10% 0%, rgba(255,255,255,.08), transparent),
+                  radial-gradient(800px 500px at 90% 10%, rgba(255,255,255,.06), transparent),
+                  linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+      background-attachment: fixed; overflow-x:hidden;}
 
-    /* Header strip */
-    .topbar{position:absolute;top:16px;left:16px;right:16px;display:flex;gap:10px;align-items:center;justify-content:space-between}
-    .chip{background:rgba(255,255,255,.85);backdrop-filter:saturate(120%) blur(8px);padding:8px 12px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.18);display:flex;gap:8px;align-items:center;font-weight:600}
-    .chip small{opacity:.66;font-weight:500}
-    .toggle{display:flex;background:rgba(255,255,255,.85);border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.18);overflow:hidden}
-    .toggle button{border:0;background:transparent;padding:8px 14px;cursor:pointer;font-weight:700}
-    .toggle button.active{background:var(--brand)}
+    /* Floating decor */
+    .decor{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+    .bubble{position:absolute;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.7),rgba(255,255,255,.1));
+      filter:blur(0.2px);animation:rise var(--dur) linear infinite;opacity:.25}
+    @keyframes rise{from{transform:translateY(110vh) translateX(var(--x)) scale(var(--s))} to{transform:translateY(-15vh) translateX(calc(var(--x) + 40px)) scale(var(--s))}}
 
-    /* Stage */
-    .stage{display:grid;grid-template-columns:280px 1fr 320px;gap:24px;align-items:center;max-width:1200px;width:95vw}
+    .main{min-height:100dvh;display:flex;flex-direction:column;align-items:center;gap:24px;position:relative;z-index:1;padding:18px}
+
+    /* Top bar */
+    .top{position:sticky;top:10px;display:flex;gap:12px;align-items:center;justify-content:space-between;width:min(1200px,100%);z-index:5}
+    .chip{background:rgba(255,255,255,.85);backdrop-filter:blur(8px) saturate(120%);padding:10px 16px;border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.18);font-weight:700}
+    .tog{display:flex;background:rgba(255,255,255,.9);border-radius:999px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+    .tog button{border:0;background:transparent;padding:10px 16px;cursor:pointer;font-weight:800;transition:.25s}
+    .tog button.active{background:var(--brand)}
+
+    /* Stage grid */
+    .stage{display:grid;grid-template-columns:320px 1fr 360px;gap:22px;align-items:start;width:min(1200px,100%)}
+    .card{background:rgba(255,255,255,.95);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;transition:transform .25s;will-change:transform}
+    .card:hover{transform:translateY(-4px)}
 
     /* Avatar card */
-    .card{background:rgba(255,255,255,.88);backdrop-filter:saturate(120%) blur(10px);border-radius:24px;box-shadow:var(--shadow)}
-    .avatar-card{padding:22px;position:relative}
-    .face{width:180px;height:180px;margin:10px auto;border-radius:50%;display:grid;place-items:center;background:#f2e9d8;box-shadow:0 12px 30px rgba(0,0,0,.15);animation:float 3s ease-in-out infinite}
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-    .name{display:flex;flex-direction:column;align-items:center;gap:2px;margin-top:10px}
-    .name h2{font-size:22px}
-    .name small{color:var(--muted)}
-
-    .badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
-    .badge{font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.06)}
-
-    /* Hotspots ring */
-    .ring{position:relative;width:260px;height:260px;margin:18px auto 0}
-    .ring .hotspot{position:absolute;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.2);cursor:pointer;transition:transform .18s,box-shadow .18s}
-    .ring .hotspot:hover{transform:scale(1.12);box-shadow:0 10px 26px rgba(0,0,0,.28)}
-    .hs-fin{top:-8px;left:50%;transform:translateX(-50%)}
-    .hs-fit{top:28%;right:-18px}
-    .hs-dig{bottom:22%;right:-18px}
-    .hs-rel{bottom:-8px;left:50%;transform:translateX(-50%)}
-    .hs-car{top:28%;left:-18px}
-
-    .speech{position:absolute;left:50%;transform:translateX(-50%);top:-14px;opacity:0;pointer-events:none;transition:all .35s ease}
+    .avatar-card{padding:18px 20px 22px;position:relative;text-align:center}
+    .speech{position:absolute;left:50%;transform:translateX(-50%);top:-10px;opacity:0;pointer-events:none;transition:all .35s ease;z-index:5}
     .speech.active{opacity:1;transform:translate(-50%,-6px)}
-    .bubble{background:#fff;border-radius:18px;padding:14px 16px;max-width:300px;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+    .bubble{background:#fff;border-radius:16px;padding:12px 14px;max-width:320px;box-shadow:0 10px 24px rgba(0,0,0,.22);font-size:14px}
     .bubble:after{content:"";position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);border-left:12px solid transparent;border-right:12px solid transparent;border-top:12px solid #fff}
 
-    /* Middle column: timeline & goals */
-    .mid{display:flex;flex-direction:column;gap:18px}
+    /* Bitmoji‑ish SVG avatar */
+    .bitmoji{width:min(240px,60vw);aspect-ratio:1/1;margin:6px auto 8px;display:block}
+    .avatar-wrap{width:fit-content;margin-inline:auto;position:relative;animation:float 3s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    /* Eye blink */
+    @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.05)}}
+    .eye{transform-origin:center;animation:blink 4.8s infinite}
+    /* Head idle tilt */
+    @keyframes tilt{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-2.4deg)}}
+    .head{transform-origin:50% 55%;animation:tilt 6s ease-in-out infinite}
+    /* Wave hand on hover */
+    @keyframes wave{0%,100%{transform:rotate(0)}25%{transform:rotate(16deg)}50%{transform:rotate(-12deg)}75%{transform:rotate(10deg)}}
+    .hand{transform-origin:90% 30%}
+    .avatar-wrap:hover .hand{animation:wave .9s ease-in-out 1}
+
+    .name h2{margin:6px 0 2px;font-size:clamp(18px,2.5vw,22px)}
+    .name small{color:var(--muted)}
+    .tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+    .tag{font-size:12px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.06)}
+
+    /* Hotspot ring */
+    .ring{position:relative;width:min(300px,70vw);aspect-ratio:1/1;margin:14px auto 0}
+    .hot{position:absolute;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#fff;box-shadow:0 8px 22px rgba(0,0,0,.22);cursor:pointer;transition:transform .18s,box-shadow .18s,font-size .18s;font-size:26px}
+    .hot:hover{transform:scale(1.12)}
+    .fin{top:-6px;left:50%;transform:translateX(-50%)}
+    .fit{top:28%;right:-10px}
+    .dig{bottom:22%;right:-10px}
+    .rel{bottom:-8px;left:50%;transform:translateX(-50%)}
+    .car{top:28%;left:-10px}
+
+    /* Middle column */
+    .mid{display:flex;flex-direction:column;gap:16px}
     .timeline{padding:16px 18px}
     .track{position:relative;display:flex;align-items:center;justify-content:space-between}
     .line{position:absolute;left:40px;right:40px;height:4px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.1)}
     .point{z-index:1;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer;transition:transform .18s}
-    .point:hover{transform:scale(1.08)}
+    .point:hover{transform:scale(1.12)}
     .point.active{background:var(--brand)}
 
-    .story{padding:16px 18px;display:flex;gap:12px;align-items:flex-start}
-    .story p{color:#333}
+    .story{padding:18px;display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.45}
 
-    .goals{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .goal{padding:12px;border-radius:16px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.12)}
-    .goal h4{margin-bottom:6px}
-    .bar{height:8px;background:rgba(0,0,0,.1);border-radius:999px;overflow:hidden}
-    .bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--ok),#7ed957);width:0}
+    .goals{padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .goal{padding:14px;border-radius:16px;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:transform .2s}
+    .goal:hover{transform:translateY(-3px)}
+    .goal h4{margin-bottom:6px;font-size:15px}
+    .bar{height:8px;background:rgba(0,0,0,.1);border-radius:999px;overflow:hidden;margin:6px 0}
+    .bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#7ed957);width:0}
 
     /* Right column: chat */
-    .chat{padding:14px}
-    .chat h3{margin-bottom:10px}
+    .chat{padding:18px;display:flex;flex-direction:column}
+    .chat h3{margin-bottom:10px;font-size:clamp(16px,2.4vw,18px)}
     .options{display:flex;flex-wrap:wrap;gap:8px}
-    .btn{border:1px solid #ddd;background:#fff;border-radius:999px;padding:8px 12px;font-size:13px;cursor:pointer;transition:transform .15s,border-color .15s}
-    .btn:hover{transform:translateY(-1px);border-color:var(--brand)}
-    .resp{margin-top:12px;border-top:1px solid #eee;padding-top:10px;min-height:42px;color:#444}
+    .btn{border:1px solid #e2e8f0;background:#fff;border-radius:999px;padding:8px 12px;font-size:13px;cursor:pointer;transition:transform .2s,border-color .2s}
+    .btn:hover{transform:translateY(-2px);border-color:var(--brand)}
+    .resp{margin-top:12px;border-top:1px solid #eee;padding-top:10px;min-height:44px;color:#374151;font-size:14px}
     .ask{display:flex;gap:8px;margin-top:10px}
-    .ask input{flex:1;padding:10px 12px;border:1px solid #ddd;border-radius:12px}
-    .ask button{padding:10px 14px;border:0;border-radius:12px;background:var(--brand);font-weight:700;cursor:pointer}
+    .ask input{flex:1;padding:10px 12px;border:1px solid #e2e8f0;border-radius:12px}
+    .ask button{padding:10px 14px;border:0;border-radius:12px;background:var(--brand);font-weight:800;cursor:pointer}
 
-    /* Helper: small finance snapshot */
-    .snapshot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+    /* Snapshot */
+    .snapshot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
     .tile{background:#fff;border-radius:14px;padding:10px 12px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,.1)}
     .tile small{display:block;color:var(--muted)}
     .tile strong{font-size:16px}
 
-    /* Moods ; also body theme updates */
-    body.morning{background:linear-gradient(135deg,#FFE5B4 0%,#FFD700 50%,#FFA500 100%)}
-    body.office{background:linear-gradient(135deg,#708090 0%,#B0C4DE 50%,#778899 100%)}
-    body.evening{background:linear-gradient(135deg,#FF6B6B 0%,#FFB347 50%,#FF8C69 100%)}
-    body.night{background:linear-gradient(135deg,#2C3E50 0%,#34495E 50%,#1A252F 100%);color:#eaeef2}
+    /* Body themes via timeline */
+    body.morning{background:linear-gradient(135deg,#FFE5B4,#FFD700,#FFA500)}
+    body.office{background:linear-gradient(135deg,#708090,#B0C4DE,#778899)}
+    body.evening{background:linear-gradient(135deg,#FF6B6B,#FFB347,#FF8C69)}
+    body.night{background:linear-gradient(135deg,#0f1a24,#1a2430,#0f1a24);color:#eaeef2}
+
+    /* Mobile dock */
+    .dock{position:sticky;bottom:10px;margin-top:10px}
+    .dock-row{display:flex;gap:8px;justify-content:center}
+    .dock-row button{flex:1;min-width:0;border:0;border-radius:14px;padding:12px;background:rgba(255,255,255,.9);box-shadow:0 8px 22px rgba(0,0,0,.22);font-weight:800}
 
     /* Responsive */
-    @media (max-width: 980px){
-      .stage{grid-template-columns:1fr;gap:16px}
-      .main{justify-content:flex-start;padding-top:80px}
-      .story{grid-column:1/-1}
-      .goals{grid-template-columns:1fr}
+    @media (max-width: 1024px){.stage{grid-template-columns:1fr}}
+    @media (max-width: 560px){
+      .ring{width:min(260px,86vw)}
+      .hot{width:52px;height:52px;font-size:22px}
       .snapshot{grid-template-columns:repeat(3,1fr)}
+    }
+    @media (prefers-reduced-motion: reduce){
+      .avatar-wrap, .head, .eye, .hand, .point:hover, .card:hover{animation:none !important}
     }
   </style>
 </head>
 <body>
+  <!-- decorative floating bubbles -->
+  <div class="decor" aria-hidden="true" id="decor"></div>
+
   <div class="main">
-    <div class="topbar">
-      <div class="chip" aria-live="polite" id="greet">👋 Good to see you!</div>
-      <div class="toggle" role="group" aria-label="Switch mood">
+    <header class="top">
+      <div class="chip" id="greet">👋 Good to see you!</div>
+      <div class="tog" role="group" aria-label="Switch mood">
         <button class="mood active" data-mood="goals" aria-pressed="true">Goals 🎯</button>
         <button class="mood" data-mood="struggles" aria-pressed="false">Struggles 😔</button>
       </div>
-    </div>
+    </header>
 
-    <div class="stage">
+    <section class="stage">
       <!-- Left: Avatar + hotspots -->
       <section class="card avatar-card" aria-label="Amit persona">
         <div class="speech" id="speech"><div class="bubble" id="bubble">Hi! Main Amit, Delhi se. Tap the icons around me 👇</div></div>
-        <div class="face" id="face" role="img" aria-label="Amit's face" title="Tap me!">😊</div>
+        <div class="avatar-wrap">
+          <!-- Simple Bitmoji-like SVG -->
+          <svg class="bitmoji" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" aria-label="Amit avatar" role="img">
+            <defs>
+              <linearGradient id="bgc" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="#fef3c7"/>
+                <stop offset="100%" stop-color="#fde68a"/>
+              </linearGradient>
+            </defs>
+            <!-- face circle -->
+            <g class="head">
+              <circle cx="140" cy="130" r="75" fill="#f2e7d6" stroke="#e6dcc8" stroke-width="3"/>
+              <!-- hair -->
+              <path d="M80,120 q60,-70 120,0 v-10 q-12,-28 -38,-38 q-26,-10 -44,0 q-28,12 -38,38 z" fill="#2f3b46"/>
+              <!-- ears -->
+              <circle cx="70" cy="135" r="12" fill="#f2e7d6"/><circle cx="210" cy="135" r="12" fill="#f2e7d6"/>
+              <!-- brows -->
+              <rect x="105" y="120" width="30" height="6" rx="3" fill="#2f3b46"/>
+              <rect x="145" y="120" width="30" height="6" rx="3" fill="#2f3b46"/>
+              <!-- eyes -->
+              <g class="eye"><circle cx="120" cy="140" r="8" fill="#1f2937"/><circle cx="160" cy="140" r="8" fill="#1f2937"/></g>
+              <!-- nose -->
+              <path d="M140 142 q-3 10 0 18" stroke="#c3b59b" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <!-- smile -->
+              <path d="M118 177 q22 16 44 0" stroke="#b45309" stroke-width="5" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- body -->
+            <rect x="85" y="200" width="110" height="60" rx="16" fill="url(#bgc)" stroke="#f1c40f"/>
+            <!-- waving hand -->
+            <g class="hand">
+              <circle cx="200" cy="205" r="16" fill="#f2e7d6" stroke="#e6dcc8"/>
+              <rect x="190" y="214" width="22" height="34" rx="10" fill="#f2e7d6" stroke="#e6dcc8"/>
+            </g>
+          </svg>
+        </div>
         <div class="name"><h2>Amit, 26 — Delhi</h2><small>Back‑office job • ₹35k/mo</small></div>
-        <div class="badges">
-          <span class="badge">Lives with parents</span>
-          <span class="badge">Budgeting & SIP</span>
-          <span class="badge">Home workouts</span>
+        <div class="tags">
+          <span class="tag">Lives with parents</span>
+          <span class="tag">Budgeting & SIP</span>
+          <span class="tag">Home workouts</span>
         </div>
 
         <div class="ring" aria-label="Life areas">
-          <button class="hotspot hs-fin" data-topic="finance" title="Money">💰</button>
-          <button class="hotspot hs-fit" data-topic="fitness" title="Fitness">🏋️</button>
-          <button class="hotspot hs-dig" data-topic="digital" title="Digital habits">📱</button>
-          <button class="hotspot hs-rel" data-topic="relationships" title="Relationships">❤️</button>
-          <button class="hotspot hs-car" data-topic="career" title="Career">📚</button>
+          <button class="hot fin" data-topic="finance" title="Money">💰</button>
+          <button class="hot fit" data-topic="fitness" title="Fitness">🏋️</button>
+          <button class="hot dig" data-topic="digital" title="Digital habits">📱</button>
+          <button class="hot rel" data-topic="relationships" title="Relationships">❤️</button>
+          <button class="hot car" data-topic="career" title="Career">📚</button>
         </div>
 
-        <!-- Quick monthly snapshot -->
         <div class="snapshot" aria-label="Monthly snapshot">
           <div class="tile"><small>Income</small><strong>₹35,000</strong></div>
           <div class="tile"><small>Essentials</small><strong>₹24,000</strong></div>
@@ -201,14 +260,38 @@
         </div>
         <div class="resp" id="resp">Click a topic or ask your own ↓</div>
         <div class="ask">
-          <input id="free" type="text" placeholder="Type your question…" aria-label="Ask anything"/>
+          <input id="free" type="text" placeholder="Type your question…" aria-label="Ask anything" />
           <button id="send">Ask</button>
         </div>
       </aside>
+    </section>
+
+    <!-- Mobile quick actions dock -->
+    <div class="dock" aria-label="Quick actions">
+      <div class="dock-row">
+        <button data-dock="finance">💰 Money</button>
+        <button data-dock="fitness">🏋️ Fitness</button>
+        <button data-dock="focus">🎯 Focus</button>
+        <button data-dock="career">📚 Career</button>
+      </div>
     </div>
   </div>
 
   <script>
+    // Floating bubbles
+    const decor = document.getElementById('decor');
+    const bubbles = 16; // performance-safe
+    for(let i=0;i<bubbles;i++){
+      const b = document.createElement('span');
+      b.className='bubble';
+      b.style.left = Math.random()*100 + 'vw';
+      b.style.width = b.style.height = (8 + Math.random()*28) + 'px';
+      b.style.setProperty('--x', Math.round(-80 + Math.random()*160) + 'px');
+      b.style.setProperty('--s', (0.6 + Math.random()*0.8).toString());
+      b.style.setProperty('--dur', (14 + Math.random()*14) + 's');
+      decor.appendChild(b);
+    }
+
     // Persona data (Hinglish tone + realistic details)
     const data = {
       mood:'goals',
@@ -264,7 +347,7 @@
       }
     };
 
-    // Greeting based on local time
+    // Greeting
     const greet = document.getElementById('greet');
     function setGreeting(){
       const h = new Date().getHours();
@@ -283,22 +366,20 @@
     }
 
     // Mood toggle & face
-    const face = document.getElementById('face');
+    const faceWrap = document.querySelector('.avatar-wrap');
     document.querySelectorAll('.mood').forEach(btn=>{
       btn.addEventListener('click',e=>{
         document.querySelectorAll('.mood').forEach(b=>b.classList.remove('active')); e.target.classList.add('active');
         data.mood = e.target.dataset.mood;
-        face.textContent = data.mood==='goals'? '😊':'😔';
         localStorage.setItem('amitMood', data.mood);
         showBubble(data.mood==='goals'?"Positive vibes only! Mere goals dekh lo 👇":"Haan, struggles hain — par handle kar lenge 💪");
       })
     })
-    // restore mood
     const savedMood = localStorage.getItem('amitMood');
     if(savedMood && savedMood!=='goals') document.querySelector('.mood[data-mood="struggles"]').click();
 
     // Hotspots
-    document.querySelectorAll('.hotspot').forEach(h=>{
+    document.querySelectorAll('.hot').forEach(h=>{
       h.addEventListener('click',e=>{
         const t = e.currentTarget.dataset.topic; showBubble(data.hotspots[t][data.mood]);
       })
@@ -315,8 +396,8 @@
       })
     })
 
-    // Face click rotates a quick fact
-    face.addEventListener('click',()=>{
+    // Avatar facts on click
+    faceWrap.addEventListener('click',()=>{
       const facts=[
         "Parents ke saath rehta hun; bhai padhai kar raha hai.",
         "Weekend pe 12–15 min deep‑dive videos pasand.",
@@ -327,7 +408,7 @@
 
     // Chat
     const resp = document.getElementById('resp');
-    function reply(text){ resp.style.opacity=0; setTimeout(()=>{resp.textContent=text; resp.style.opacity=1;},100); }
+    function reply(text){ resp.style.opacity=0; setTimeout(()=>{resp.textContent=text; resp.style.opacity=1;},120); }
     document.querySelectorAll('.q').forEach(b=>{
       b.addEventListener('click',()=>{
         const arr = data.chat[b.dataset.q]; reply(arr[Math.floor(Math.random()*arr.length)]);
@@ -336,18 +417,26 @@
     document.getElementById('send').addEventListener('click',()=>{
       const v = document.getElementById('free').value.trim();
       if(!v) return; document.getElementById('free').value='';
-      // lightweight intent matching
       const k=v.toLowerCase();
       if(k.includes('sip')||k.includes('save')||k.includes('money')) reply(data.chat.money[0]);
       else if(k.includes('job')||k.includes('career')||k.includes('salary')) reply(data.chat.career[0]);
       else if(k.includes('workout')||k.includes('gym')||k.includes('fitness')) reply(data.chat.fitness[0]);
       else if(k.includes('focus')||k.includes('phone')||k.includes('scroll')) reply(data.chat.focus[0]);
       else if(k.includes('family')||k.includes('parents')) reply(data.chat.family[0]);
-      else reply("Sun liya 😊 — main ispe practical tips dunga: chhota start, daily systems, aur weekend deep‑dive.");
+      else reply("Sun liya 😊 — chhota start, daily systems, weekend deep‑dive.");
     })
 
-    // Initial cue
-    setTimeout(()=>showBubble("Hi! Main Amit — 26, Delhi. Mere life areas explore karo."), 800);
+    // Dock actions (mobile)
+    document.querySelectorAll('.dock [data-dock]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const k = btn.dataset.dock;
+        if (['finance','fitness','digital','relationships','career'].includes(k)) {
+          showBubble((data.hotspots[k] && data.hotspots[k][data.mood]) || '');
+        } else if (k === 'focus') {
+          reply(data.chat.focus[0]);
+        }
+      });
+    });
   </script>
 </body>
 </html>
