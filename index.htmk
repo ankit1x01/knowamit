@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meet Amit - Your Delhi Friend</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #8B7355 0%, #5F7161 50%, #6B8E7F 100%);
+            transition: background 0.8s ease;
+            position: relative;
+        }
+
+        /* Main Container */
+        .main-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Avatar Container */
+        .avatar-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 50px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            background: #E8DCC4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Hotspots */
+        .hotspot {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .hotspot:hover {
+            transform: scale(1.2);
+            background: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .hotspot.finance { top: -30px; left: 50%; transform: translateX(-50%); }
+        .hotspot.fitness { top: 30%; right: -80px; }
+        .hotspot.digital { bottom: 30%; right: -80px; }
+        .hotspot.relationships { bottom: -30px; left: 50%; transform: translateX(-50%); }
+        .hotspot.career { top: 30%; left: -80px; }
+
+        /* Speech Bubble */
+        .speech-bubble {
+            position: absolute;
+            bottom: 250px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            max-width: 300px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.5s ease;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 15px solid white;
+        }
+
+        .speech-bubble.active {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: absolute;
+            bottom: 80px;
+            width: 90%;
+            max-width: 600px;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .timeline-track {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .timeline-point {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        .timeline-point:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .timeline-point.active {
+            background: #FFD700;
+            transform: scale(1.2);
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 30px;
+            right: 30px;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            z-index: 1;
+        }
+
+        /* Mood Toggle */
+        .mood-toggle {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 30px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .mood-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .mood-btn.active {
+            background: #FFD700;
+            color: #333;
+        }
+
+        /* Chatbox */
+        .chatbox {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            width: 250px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .chat-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .chat-btn {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .chat-btn:hover {
+            background: #FFD700;
+            border-color: #FFD700;
+            transform: scale(1.05);
+        }
+
+        .chat-response {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+            color: #555;
+            min-height: 30px;
+        }
+
+        /* Name Label */
+        .name-label {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hotspot {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+            
+            .hotspot.fitness { right: -60px; }
+            .hotspot.digital { right: -60px; }
+            .hotspot.career { left: -60px; }
+            
+            .timeline {
+                bottom: 20px;
+                padding: 15px;
+            }
+            
+            .timeline-point {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+            
+            .chatbox {
+                width: 200px;
+                right: 10px;
+                bottom: 10px;
+            }
+            
+            .mood-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 5px 10px;
+            }
+            
+            .mood-btn {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* Background variations */
+        body.morning {
+            background: linear-gradient(135deg, #FFE5B4 0%, #FFD700 50%, #FFA500 100%);
+        }
+
+        body.office {
+            background: linear-gradient(135deg, #708090 0%, #B0C4DE 50%, #778899 100%);
+        }
+
+        body.evening {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFB347 50%, #FF8C69 100%);
+        }
+
+        body.night {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #1A252F 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Mood Toggle -->
+        <div class="mood-toggle">
+            <button class="mood-btn active" data-mood="goals">Goals 🎯</button>
+            <button class="mood-btn" data-mood="struggles">Struggles 😔</button>
+        </div>
+
+        <!-- Avatar Container -->
+        <div class="avatar-container">
+            <div class="avatar" id="avatar">🧑‍💼</div>
+            
+            <!-- Hotspots -->
+            <div class="hotspot finance" data-topic="finance">💰</div>
+            <div class="hotspot fitness" data-topic="fitness">🏋️</div>
+            <div class="hotspot digital" data-topic="digital">📱</div>
+            <div class="hotspot relationships" data-topic="relationships">❤️</div>
+            <div class="hotspot career" data-topic="career">📚</div>
+            
+            <!-- Name Label -->
+            <div class="name-label">Amit, 26, Delhi</div>
+        </div>
+
+        <!-- Speech Bubble -->
+        <div class="speech-bubble" id="speechBubble">
+            <p id="bubbleText">Hi! Main Amit, Delhi se. Click around to know more!</p>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline">
+            <div class="timeline-track">
+                <div class="timeline-line"></div>
+                <div class="timeline-point" data-time="morning">☀️</div>
+                <div class="timeline-point" data-time="office">🏢</div>
+                <div class="timeline-point" data-time="evening">🌆</div>
+                <div class="timeline-point" data-time="night">🌙</div>
+            </div>
+        </div>
+
+        <!-- Chatbox -->
+        <div class="chatbox">
+            <div class="chat-header">Ask Amit about:</div>
+            <div class="chat-options">
+                <button class="chat-btn" data-question="money">Money</button>
+                <button class="chat-btn" data-question="fitness">Fitness</button>
+                <button class="chat-btn" data-question="focus">Focus</button>
+                <button class="chat-btn" data-question="family">Family</button>
+            </div>
+            <div class="chat-response" id="chatResponse">Click to ask me anything!</div>
+        </div>
+    </div>
+
+    <script>
+        // Speech bubble management
+        const speechBubble = document.getElementById('speechBubble');
+        const bubbleText = document.getElementById('bubbleText');
+        const avatar = document.getElementById('avatar');
+        let bubbleTimeout;
+
+        function showBubble(text, duration = 5000) {
+            clearTimeout(bubbleTimeout);
+            bubbleText.textContent = text;
+            speechBubble.classList.add('active');
+            
+            bubbleTimeout = setTimeout(() => {
+                speechBubble.classList.remove('active');
+            }, duration);
+        }
+
+        // Hotspot content
+        const hotspotContent = {
+            finance: {
+                goals: "SIP start karna hai, emergency fund banana hai. ₹50-60k salary ka target!",
+                struggles: "₹35k mein ghar, transport, food... budget tight hai yaar. Kuch save nahi ho pata."
+            },
+            fitness: {
+                goals: "Muscle gain karna hai, confidence build karni hai. Home workout se start!",
+                struggles: "Gym membership costly hai bro. Ghar pe consistent nahi ho pata, distractions bahut."
+            },
+            digital: {
+                goals: "Pomodoro technique use karunga, screen time kam, productive banunga!",
+                struggles: "Raat ko YouTube scrolling... time waste, next day tired. Control nahi hota."
+            },
+            relationships: {
+                goals: "Stable relationship chahiye, family ke saath modern finance planning!",
+                struggles: "Breakup ka effect abhi bhi hai. Family expectations vs mere dreams..."
+            },
+            career: {
+                goals: "Upskilling karke role change ya side hustle! Clear path chahiye success ka.",
+                struggles: "Itne options mein confused... kya sikhu? Kaise grow karu? Future unclear."
+            }
+        };
+
+        // Current mood state
+        let currentMood = 'goals';
+
+        // Hotspot clicks
+        document.querySelectorAll('.hotspot').forEach(hotspot => {
+            hotspot.addEventListener('click', (e) => {
+                const topic = e.target.dataset.topic;
+                const content = hotspotContent[topic][currentMood];
+                showBubble(content);
+            });
+        });
+
+        // Mood toggle
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentMood = e.target.dataset.mood;
+                
+                // Change avatar expression
+                avatar.textContent = currentMood === 'goals' ? '😊' : '😔';
+                
+                // Show mood-based message
+                if (currentMood === 'goals') {
+                    showBubble("Positive vibes only! Click around to know my goals!");
+                } else {
+                    showBubble("Life mein struggles toh hain, but we'll overcome!");
+                }
+            });
+        });
+
+        // Timeline content
+        const timelineContent = {
+            morning: {
+                text: "Subah rush mein breakfast, phir commute. Thoda thaka hua feel.",
+                bgClass: 'morning'
+            },
+            office: {
+                text: "Back-office ka kaam, ₹35k salary. Future ka plan sochta rehta hun.",
+                bgClass: 'office'
+            },
+            evening: {
+                text: "Thoda relax time, par work ke baad energy nahi bachti.",
+                bgClass: 'evening'
+            },
+            night: {
+                text: "YouTube pe Hinglish videos, late night tak scroll. Focus chahiye yaar!",
+                bgClass: 'night'
+            }
+        };
+
+        // Timeline clicks
+        document.querySelectorAll('.timeline-point').forEach(point => {
+            point.addEventListener('click', (e) => {
+                // Remove active from all points
+                document.querySelectorAll('.timeline-point').forEach(p => p.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                const time = e.target.dataset.time;
+                const content = timelineContent[time];
+                
+                // Show bubble
+                showBubble(content.text);
+                
+                // Change background
+                document.body.className = content.bgClass;
+            });
+        });
+
+        // Chat responses
+        const chatResponses = {
+            money: "Bro, tight budget hai... ₹35k mein family responsibility bhi. SIP start karni hai, ₹60k salary hit karna hai target!",
+            fitness: "Gym membership costly hai yaar... ghar pe hi workout karna padega. Consistency ka issue hai.",
+            focus: "Late night scrolling kills my productivity! Pomodoro try karna chahiye, digital detox needed.",
+            family: "Family ki responsibility hai, unke finances modernize karne hain. Better future banana hai sabke liye!"
+        };
+
+        // Chat interactions
+        const chatResponse = document.getElementById('chatResponse');
+        document.querySelectorAll('.chat-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const question = e.target.dataset.question;
+                chatResponse.textContent = chatResponses[question];
+                
+                // Animate response
+                chatResponse.style.opacity = '0';
+                setTimeout(() => {
+                    chatResponse.style.opacity = '1';
+                }, 100);
+            });
+        });
+
+        // Initial welcome
+        setTimeout(() => {
+            showBubble("Hi! Main Amit, 26 saal, Delhi se. Click the icons around me!");
+        }, 1000);
+
+        // Avatar click
+        avatar.addEventListener('click', () => {
+            const messages = [
+                "Namaste! Working professional hun, back-office job.",
+                "Parents ke saath rehta hun, family responsibilities hain.",
+                "Life improve karni hai - money, body, mind, sab kuch!",
+                "Click around to explore my life!"
+            ];
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            showBubble(randomMsg);
+        });
+    </script>
+</body>
+</html>
